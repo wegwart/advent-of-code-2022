@@ -1,3 +1,5 @@
+import pathlib
+
 def decode(code):
     if code in ['A', 'X']:
         select = 'Rock'
@@ -83,7 +85,22 @@ def puzzle_part2(file_name, verbose = False):
         print('{} --> {} --> {}'.format(file_name, scores, result))
     return result
 
+__location__ = pathlib.Path(__file__).parent
+
+def test_puzzle():
+    assert(puzzle(__location__ / 'day2_test.txt', verbose=True) ==  15)
+    
+def print_puzzle():
+    print(puzzle(__location__ / 'day2_puzzle.txt'))
+    
+def test_puzzle_part2():
+    assert(puzzle_part2(__location__ / 'day2_test.txt', verbose=True) == 12)
+    
+def print_puzzle_part2():
+    print(puzzle_part2(__location__ / 'day2_puzzle.txt'))
+    
 if __name__ == '__main__':
-    verbose = True
-    puzzle('day2_test.txt', verbose)
-    puzzle_part2('day2_test.txt', verbose)
+    test_puzzle()
+    print_puzzle()
+    test_puzzle_part2()
+    print_puzzle_part2()

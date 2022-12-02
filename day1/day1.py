@@ -1,3 +1,5 @@
+import pathlib
+
 def get_subtotals(file_name):
     with open(file_name) as f:  
         subtotal = 0
@@ -27,7 +29,22 @@ def puzzle_part2(file_name, verbose = False):
         print('{} --> {} --> {}'.format(file_name, subtotals, result))
     return result
 
+__location__ = pathlib.Path(__file__).parent
+
+def test_puzzle():
+    assert(puzzle(__location__ / 'day1_test.txt', verbose=True) == 24000)
+  
+def print_puzzle():   
+    print(puzzle(__location__ / 'day1_puzzle.txt'))
+    
+def test_puzzle_part2():
+    assert(puzzle_part2(__location__ / 'day1_test.txt', verbose=True) == 45000)
+    
+def print_puzzle_part2():
+    print(puzzle_part2(__location__ / 'day1_puzzle.txt'))
+    
 if __name__ == '__main__':
-    verbose = True
-    puzzle('day1_test.txt', verbose)
-    puzzle_part2('day1_test.txt', verbose)
+    test_puzzle()
+    print_puzzle()
+    test_puzzle_part2()
+    print_puzzle_part2()
