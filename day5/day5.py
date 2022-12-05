@@ -1,6 +1,6 @@
 import pathlib
           
-def get_intermediate_results(file_name, N):
+def get_intermediate_results(file_name, N, is_part2):
     with open(file_name) as f:
         crates_list = [[] for i in range(N)]
         init = True
@@ -21,16 +21,32 @@ def get_intermediate_results(file_name, N):
                 move_from = int(splitted_line[3])
                 move_to = int(splitted_line[5]) 
                 move_crates = []
-                for i in range(move_count):               
-                    crate = crates_list[move_from-1].pop()
-                #    move_crates.append(crate)
-                #for i in range(move_count):    
-                #    crate = move_crates[i]           
-                    crates_list[move_to-1].append(crate)
+                if is_part2:
+                    for i in range(move_count):               
+                        crate = crates_list[move_from-1].pop()                    
+                        move_crates.append(crate)
+                    move_crates.reverse()
+                    for i in range(move_count):    
+                        crate = move_crates[i]           
+                        crates_list[move_to-1].append(crate)
+                else:                        
+                    for i in range(move_count):               
+                        crate = crates_list[move_from-1].pop()                    
+                        crates_list[move_to-1].append(crate)
         return crates_list
        
 def puzzle(file_name, N, verbose = False):
-    intermediate_results = get_intermediate_results(file_name, N)
+    intermediate_results = get_intermediate_results(file_name, N, is_part2=False)
+    result = ''
+    for intermediate_result in intermediate_results:
+        peek_crate = intermediate_result[-1]
+        result += peek_crate
+    if verbose:
+        print('{} --> {} --> {}'.format(file_name, intermediate_results, result))
+    return result
+
+def puzzle_part2(file_name, N, verbose = False):
+    intermediate_results = get_intermediate_results(file_name, N, is_part2=True)
     result = ''
     for intermediate_result in intermediate_results:
         peek_crate = intermediate_result[-1]
@@ -44,10 +60,18 @@ __location__ = pathlib.Path(__file__).parent
 def test_puzzle():
     assert(puzzle(__location__ / 'day5_test.txt', 3, verbose=True) ==  'CMZ')
         
+def test_puzzle_part2():
+    assert(puzzle_part2(__location__ / 'day5_test.txt', 3, verbose=True) ==  'MCD')
+            
 def print_puzzle():
     print(puzzle(__location__ / 'day5_puzzle.txt', 9))
        
+def print_puzzle_part2():
+    print(puzzle_part2(__location__ / 'day5_puzzle.txt', 9))
+           
 if __name__ == '__main__':
     test_puzzle()
     print_puzzle()
+    test_puzzle_part2()
+    print_puzzle_part2()
 
