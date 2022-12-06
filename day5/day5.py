@@ -34,19 +34,9 @@ def get_intermediate_results(file_name, N, is_part2):
                         crate = crates_list[move_from-1].pop()                    
                         crates_list[move_to-1].append(crate)
         return crates_list
-       
-def puzzle(file_name, N, verbose = False):
-    intermediate_results = get_intermediate_results(file_name, N, is_part2=False)
-    result = ''
-    for intermediate_result in intermediate_results:
-        peek_crate = intermediate_result[-1]
-        result += peek_crate
-    if verbose:
-        print('{} --> {} --> {}'.format(file_name, intermediate_results, result))
-    return result
 
-def puzzle_part2(file_name, N, verbose = False):
-    intermediate_results = get_intermediate_results(file_name, N, is_part2=True)
+def puzzle(file_name, N, is_part2, verbose = False):
+    intermediate_results = get_intermediate_results(file_name, N, is_part2)
     result = ''
     for intermediate_result in intermediate_results:
         peek_crate = intermediate_result[-1]
@@ -58,16 +48,16 @@ def puzzle_part2(file_name, N, verbose = False):
 __location__ = pathlib.Path(__file__).parent
 
 def test_puzzle():
-    assert(puzzle(__location__ / 'day5_test.txt', 3, verbose=True) ==  'CMZ')
+    assert(puzzle(__location__ / 'day5_test.txt', 3, False, verbose=True) ==  'CMZ')
         
 def test_puzzle_part2():
-    assert(puzzle_part2(__location__ / 'day5_test.txt', 3, verbose=True) ==  'MCD')
+    assert(puzzle(__location__ / 'day5_test.txt', 3, True, verbose=True) ==  'MCD')
             
 def print_puzzle():
-    print(puzzle(__location__ / 'day5_puzzle.txt', 9))
+    print(puzzle(__location__ / 'day5_puzzle.txt', 9, False))
        
 def print_puzzle_part2():
-    print(puzzle_part2(__location__ / 'day5_puzzle.txt', 9))
+    print(puzzle(__location__ / 'day5_puzzle.txt', 9, True))
            
 if __name__ == '__main__':
     test_puzzle()
