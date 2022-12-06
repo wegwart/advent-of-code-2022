@@ -20,19 +20,13 @@ def get_intermediate_results(file_name, N, is_part2):
                 move_count = int(splitted_line[1])
                 move_from = int(splitted_line[3])
                 move_to = int(splitted_line[5]) 
-                move_crates = []
+                move_crates_slice = slice(-move_count,None)
+                move_crates = crates_list[move_from-1][move_crates_slice]                        
+                del crates_list[move_from-1][move_crates_slice]
                 if is_part2:
-                    for i in range(move_count):               
-                        crate = crates_list[move_from-1].pop()                    
-                        move_crates.append(crate)
-                    move_crates.reverse()
-                    for i in range(move_count):    
-                        crate = move_crates[i]           
-                        crates_list[move_to-1].append(crate)
-                else:                        
-                    for i in range(move_count):               
-                        crate = crates_list[move_from-1].pop()                    
-                        crates_list[move_to-1].append(crate)
+                    crates_list[move_to-1].extend(move_crates)
+                else:
+                    crates_list[move_to-1].extend(reversed(move_crates))
         return crates_list
 
 def puzzle(file_name, N, is_part2, verbose = False):
