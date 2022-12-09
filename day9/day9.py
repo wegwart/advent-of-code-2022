@@ -1,7 +1,7 @@
 import pathlib
 import matplotlib.pyplot as plt
   
-def get_intermediate_results(file_name, knots):
+def get_intermediate_results(file_name, knots, verbose):
     with open(file_name) as f:
         motions = []
         for index, line in enumerate(f):
@@ -10,45 +10,48 @@ def get_intermediate_results(file_name, knots):
     K = knots
     x, y = [0] * K, [0] * K
     tail_positions = []
-    for motion in motions:
+    for motion in motions:        
         direction = motion[0]
         steps = int(motion[1])
+        if verbose:
+            print('\n{} {} '.format(direction, steps), end='')
         for step in range(steps):
-            for k in range(K-1):        
+            for k in range(K):        
                 if k == 0:
-                    match direction:
-                        case 'R':
-                            x[k] += 1  
-                        case 'L':
-                            x[k] -= 1
-                        case 'U':
-                            y[k] += 1                
-                        case 'D':
-                            y[k] -= 1                    
-                move_diagonally = x[k] != x[k+1] and y[k] != y[k+1]
-                if x[k] == x[k+1] + 2:
-                    x[k+1] += 1
-                    if move_diagonally:
-                        y[k+1] = y[k]
-                elif x[k] == x[k+1] - 2:
-                    x[k+1] -= 1
-                    if move_diagonally:
-                        y[k+1] = y[k]
-                if y[k] == y[k+1] + 2:
-                    y[k+1] += 1
-                    if move_diagonally:
-                        x[k+1] = x[k]
-                elif y[k] == y[k+1] - 2:
-                    y[k+1] -= 1
-                    if move_diagonally:
-                        x[k+1] = x[k]
-                if k == K-2:
-                    position = (x[k+1],y[k+1])
-                    tail_positions.append(position)
+                    if direction == 'R':
+                        x[k] += 1  
+                    elif direction == 'L':
+                        x[k] -= 1
+                    elif direction == 'U':
+                        y[k] += 1                
+                    elif direction == 'D':
+                        y[k] -= 1  
+                    if verbose:
+                        print('\n{}={},{} '.format('H', x[k], y[k]), end='')
+                    continue
+                dx = x[k-1] - x[k] 
+                dy = y[k-1] - y[k]
+                if abs(dx) == 2 and abs(dy) == 0:
+                    x[k] += int(dx/2)
+                elif abs(dx) == 0 and abs(dy) == 2:
+                    y[k] += int(dy/2)
+                elif abs(dx) == 2 and abs(dy) == 2:
+                    x[k] += int(dx/2)
+                    y[k] += int(dy/2)                    
+                elif abs(dx) == 2 and abs(dy) == 1:
+                    x[k] += int(dx/2)
+                    y[k] += dy
+                elif abs(dx) == 1 and abs(dy) == 2:
+                    x[k] += dx
+                    y[k] += int(dy/2)
+                if verbose:                        
+                    print('{}={},{} '.format(k, x[k], y[k]), end='')                                        
+                if k == K-1:
+                    tail_positions.append((x[k],y[k]))
     return tail_positions
 
 def puzzle(file_name, knots, verbose = False, plot = False):
-    tail_positions = get_intermediate_results(file_name, knots)
+    tail_positions = get_intermediate_results(file_name, knots, verbose)
     unique_tail_positions = dict()
     for tail_position in tail_positions:
         unique_tail_positions[tail_position] = unique_tail_positions.get(tail_position, 0) + 1
@@ -60,7 +63,7 @@ def puzzle(file_name, knots, verbose = False, plot = False):
         fig, ax = plt.subplots()   
         ax.plot(x, y, 'ro')
         plt.grid()
-        plt.show(block=False)
+        plt.show(block=True)
     if verbose:
         print('{} --> {} --> {}'.format(file_name, unique_tail_positions, result))
     return result
@@ -68,11 +71,11 @@ def puzzle(file_name, knots, verbose = False, plot = False):
 __location__ = pathlib.Path(__file__).parent
    
 def test_puzzle():
-    assert(puzzle(__location__ / 'day9_test.txt', 2, verbose=True) == 13) 
+    assert(puzzle(__location__ / 'day9_test.txt', 2, verbose=False) == 13) 
 
 def test_puzzle_part2():
-    assert(puzzle(__location__ / 'day9_test.txt', 10, verbose=True) == 1)
-    assert(puzzle(__location__ / 'day9_test_part2.txt', 10, verbose=True) == 36)
+    assert(puzzle(__location__ / 'day9_test.txt', 10, verbose=False) == 1)
+    assert(puzzle(__location__ / 'day9_test_part2.txt', 10, verbose=False) == 36)
             
 def print_puzzle():
     print(puzzle(__location__ / 'day9_puzzle.txt', 2))
